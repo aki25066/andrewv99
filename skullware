@@ -1,0 +1,25 @@
+-- Get the LocalPlayer and the Camera
+local player = game.Players.LocalPlayer
+local camera = game.Workspace.CurrentCamera
+local character = player.Character or player.CharacterAdded:Wait()
+
+-- Wait for the player's head part
+local head = character:WaitForChild("Head")
+
+-- Lock on settings
+local lockOnSpeed = 5  -- Controls how fast the camera locks onto the head
+local offset = Vector3.new(0, 2, 5)  -- The offset of the camera from the head, can be adjusted
+
+-- Function to smoothly move the camera
+game:GetService("RunService").RenderStepped:Connect(function()
+    if head and character:FindFirstChild("Head") then
+        -- Calculate the target position with the offset
+        local targetPosition = head.Position + offset
+        
+        -- Lerp smoothly towards the target position
+        local smoothPosition = camera.CFrame.Position:Lerp(targetPosition, lockOnSpeed * game:GetService("RunService").Heartbeat:Wait())
+        
+        -- Update the camera's position and make it look at the player's head
+        camera.CFrame = CFrame.new(smoothPosition, head.Position)
+    end
+end)
